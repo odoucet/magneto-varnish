@@ -16,7 +16,7 @@ class Magneto_Varnish_CacheController extends Mage_Adminhtml_CacheController {
                 if (count($errors) > 0) {
 					$this->_getSession()->addError(Mage::helper('adminhtml')->__("Error while purging Varnish cache:<br />" . implode('<br />', $errors)));
                 } else {
-                	$this->_getSession()->addSuccess(Mage::helper('adminhtml')->__("Varnish cache type purged." . var_export($errors, 1)));
+                	$this->_getSession()->addSuccess(Mage::helper('adminhtml')->__("Varnish cache purged."));
                 }
             }
         }
