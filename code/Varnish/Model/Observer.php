@@ -6,12 +6,13 @@ class Magneto_Varnish_Model_Observer {
      * This method is called when http_response_send_before event is triggered to identify
      * if current page can be cached and set correct cookies for varnish.
      * 
-     * @param $observer Varien_Event_Observer
+     * @param Varien_Event_Observer $observer
+	 * @return bool|void
      */
     public function varnish(Varien_Event_Observer $observer)
     {
         $event = $observer->getEvent();
-        $helper = Mage::helper('varnish/cacheable'); /* @var $helper Magneto_Varnish_Model_Cacheable */
+        $helper = Mage::helper('varnish/cacheable'); /* @var $helper Magneto_Varnish_Helper_Cacheable */
 
         // Cache disabled in Admin / System / Cache Management
         if( !Mage::app()->useCache('varnish') ){
@@ -43,7 +44,8 @@ class Magneto_Varnish_Model_Observer {
     /**
      * @see Mage_Core_Model_Cache
      * 
-     * @param Mage_Core_Model_Observer $observer 
+     * @param Mage_Core_Model_Observer $observer
+	 * @return Magneto_Varnish_Model_Observer
      */
     public function onCategorySave($observer)
     {
@@ -61,6 +63,7 @@ class Magneto_Varnish_Model_Observer {
      * model is saved.
      *
      * @param $observer Mage_Core_Model_Observer
+	 * @return Magneto_Varnish_Model_Observer
      */
     public function purgeCache($observer)
     {
@@ -128,7 +131,9 @@ class Magneto_Varnish_Model_Observer {
 
     /**
      * Returns all the urls related to product
+	 *
      * @param Mage_Catalog_Model_Product $product
+	 * @return array
      */
     protected function _getUrlsForProduct($product){
         $urls = array();
@@ -164,9 +169,11 @@ class Magneto_Varnish_Model_Observer {
         return $urls;
     }
 
-
     /** 
      * Returns all the urls pointing to the category
+	 *
+	 * @param $category
+	 * @return array
      */
     protected function _getUrlsForCategory($category) {
         $urls = array();
@@ -197,6 +204,9 @@ class Magneto_Varnish_Model_Observer {
 
     /**
      * Returns all urls related to this cms page
+	 *
+	 * @param string $cmsPageId
+	 * @return array
      */
     protected function _getUrlsForCmsPage($cmsPageId)
     {
