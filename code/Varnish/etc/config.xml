@@ -17,6 +17,11 @@
         </routers>
     </frontend>
     <global>
+		<blocks>
+			<varnish>
+				<class>Magneto_Varnish_Block</class>
+			</varnish>
+		</blocks>
         <models>
             <varnish>
                 <class>Magneto_Varnish_Model</class>
@@ -91,6 +96,15 @@
     </default>
 
     <adminhtml>
+
+		<layout>
+			<updates>
+				<magnetovarnish>
+					<file>magnetovarnish/magnetovarnish.xml</file>
+				</magnetovarnish>
+			</updates>
+		</layout>
+
         <acl>
             <resources>
                 <admin>

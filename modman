@@ -3,3 +3,6 @@ code/Varnish                  app/code/community/Magneto/Varnish
 #design/layout/varnish.xml     app/design/frontend/base/default/layout/varnish.xml 
 #design/template/varnish       app/design/frontend/base/default/template/varnish
 Magneto_Varnish.xml           app/etc/modules/Magneto_Varnish.xml 
+
+design/adminhtml/default/default/layout/magnetovarnish/		app/design/adminhtml/default/default/layout/magnetovarnish/
+design/adminhtml/default/default/template/magnetovarnish/	app/design/adminhtml/default/default/template/magnetovarnish/
