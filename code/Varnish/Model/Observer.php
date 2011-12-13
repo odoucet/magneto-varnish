@@ -121,9 +121,13 @@ class Magneto_Varnish_Model_Observer {
                 Mage::getSingleton('adminhtml/session')->addError(
                     "Some Varnish purges failed: <br/>" . implode("<br/>", $errors));
             } else {
-                Mage::getSingleton('adminhtml/session')->addSuccess(
-                    "Purges have been submitted successfully: <br/>" . implode("<br/>", $relativeUrls));
-            }
+				$count = count($relativeUrls);
+				if ($count > 5) {
+					$relativeUrls = array_slice($relativeUrls, 0, 5);
+					$relativeUrls[] = '...';
+					$relativeUrls[] = "(Total number of purged urls: $count)";
+				}
+                Mage::getSingleton('adminhtml/session')->addSuccess("Purges have been submitted successfully:<br/>" . implode("<br />", $relativeUrls));            }
         }
 
         return $this;
