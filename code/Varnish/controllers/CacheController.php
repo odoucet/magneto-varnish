@@ -43,8 +43,18 @@ class Magneto_Varnish_CacheController extends Mage_Adminhtml_CacheController {
 		}
 		if (count($cleanedUrls) > 0) {
 			$varnishHelper = Mage::helper('varnish'); /* @var $varnishHelper Magneto_Varnish_Helper_Data */
-			$varnishHelper->purge($cleanedUrls);
-			$this->_getSession()->addSuccess(Mage::helper('adminhtml')->__("Purged Varnish Urls: ") . '<pre>' . implode("\n", $cleanedUrls).'</pre>');
+			$errors = $varnishHelper->purge($cleanedUrls);
+			if (count($errors) == 0) {
+				$this->_getSession()->addSuccess(Mage::helper('adminhtml')->__("Purged Varnish Urls: ") . '<pre>' . implode("\n", $cleanedUrls).'</pre>');
+			} else {
+				$this->_getSession()->addError(
+					Mage::helper('adminhtml')->__("Errors while puring Varnish Urls: ") . '<br />' .
+						'<b>Urls:</b>' .
+						'<pre>' . implode("\n", $cleanedUrls).'</pre>' .
+						'<b>Errors:</b>' .
+						'<pre>' . implode("\n", $errors).'</pre>'
+				);
+			}
 		}
 		$this->_redirect('*/*/index');
 	}
