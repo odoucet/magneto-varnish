@@ -90,8 +90,10 @@ class Magneto_Varnish_Helper_Data extends Mage_Core_Helper_Abstract
         curl_multi_close($mh);
 
 		$this->logAdminAction(
-		    count($errors) == 0,
-			implode(', ', $urls)
+		    empty($errors),
+			implode(', ', $urls),
+			null,
+			$errors
 	    );
         
         return $errors;
@@ -105,25 +107,33 @@ class Magneto_Varnish_Helper_Data extends Mage_Core_Helper_Abstract
 	 * @param null $additionalInfo
 	 * @return mixed
 	 */
-	protected function logAdminAction($success=true, $generalInfo=null, $additionalInfo=null) {
+	protected function logAdminAction($success=true, $generalInfo=null, $additionalInfo=null, $errors=array()) {
 		$eventCode = 'varnish_purge'; // this needs to match the code in logging.xml
 
 		if (!Mage::getSingleton('enterprise_logging/config')->isActive($eventCode, true)) {
 			return;
 		}
 
-		$currentUser = Mage::getSingleton('admin/session')->getUser(); /* @var $currentUser Mage_Admin_Model_User */
+		$username = null;
+		$userId   = null;
+		if (Mage::getSingleton('admin/session')->isLoggedIn()) {
+			$userId = Mage::getSingleton('admin/session')->getUser()->getId();
+			$username = Mage::getSingleton('admin/session')->getUser()->getUsername();
+		}
+
 		$request = Mage::app()->getRequest();
 		return Mage::getSingleton('enterprise_logging/event')->setData(array(
 			'ip'         => Mage::helper('core/http')->getRemoteAddr(),
-			'user'       => $currentUser->getUsername(),
-			'user_id'    => $currentUser->getId(),
+			'x_forwarded_ip'=> Mage::app()->getRequest()->getServer('HTTP_X_FORWARDED_FOR'),
+			'user'       => $username,
+			'user_id'    => $userId,
 			'is_success' => $success,
 			'fullaction' => "{$request->getRouteName()}_{$request->getControllerName()}_{$request->getActionName()}",
 			'event_code' => $eventCode,
 			'action'     => 'purge',
 			'info'       => $generalInfo,
-			'additional_info' => $additionalInfo
+			'additional_info' => $additionalInfo,
+			'error_message' => implode("\n", $errors),
 		))->save();
 	}
 
