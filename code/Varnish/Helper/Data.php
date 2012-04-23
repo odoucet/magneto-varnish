@@ -88,7 +88,43 @@ class Magneto_Varnish_Helper_Data extends Mage_Core_Helper_Abstract
             curl_close($ch);
         }
         curl_multi_close($mh);
+
+		$this->logAdminAction(
+		    count($errors) == 0,
+			implode(', ', $urls)
+	    );
         
         return $errors;
     }
+
+	/**
+	 * Log admin action
+	 *
+	 * @param bool $success
+	 * @param null $generalInfo
+	 * @param null $additionalInfo
+	 * @return mixed
+	 */
+	protected function logAdminAction($success=true, $generalInfo=null, $additionalInfo=null) {
+		$eventCode = 'varnish_purge'; // this needs to match the code in logging.xml
+
+		if (!Mage::getSingleton('enterprise_logging/config')->isActive($eventCode, true)) {
+			return;
+		}
+
+		$currentUser = Mage::getSingleton('admin/session')->getUser(); /* @var $currentUser Mage_Admin_Model_User */
+		$request = Mage::app()->getRequest();
+		return Mage::getSingleton('enterprise_logging/event')->setData(array(
+			'ip'         => Mage::helper('core/http')->getRemoteAddr(),
+			'user'       => $currentUser->getUsername(),
+			'user_id'    => $currentUser->getId(),
+			'is_success' => $success,
+			'fullaction' => "{$request->getRouteName()}_{$request->getControllerName()}_{$request->getActionName()}",
+			'event_code' => $eventCode,
+			'action'     => 'purge',
+			'info'       => $generalInfo,
+			'additional_info' => $additionalInfo
+		))->save();
+	}
+
 }
