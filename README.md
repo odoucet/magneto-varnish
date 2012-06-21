@@ -39,6 +39,11 @@ In case you get an error that git is not found, you'll have to install git and r
 
 1. Flush Magento cache to enable the extension
 
+##Manual Installation instructions
+- mursalat
+I have added a manual installation instructions without modman, you can find the whole instructions on my site:
+http://www.mursalat.net/projects-blog/varnish-3-magento-1-7-on-apache2-debian-6-squeeze.html
+
 ## Requirements
 
 1. Apache started and listening on port 81 (Varnish configuration is using this port)
