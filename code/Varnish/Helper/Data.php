@@ -81,14 +81,60 @@ class Magneto_Varnish_Helper_Data extends Mage_Core_Helper_Abstract
             if (curl_errno($ch)) {
                 $errors[] = "Cannot purge url {$info['url']} due to error" . curl_error($ch);
             } else if ($info['http_code'] != 200 && $info['http_code'] != 404) {
-                $errors[] = "Cannot purge url {$info['url']}, http code: {$info['http_code']}";
+                $errors[] = "Cannot purge url {$info['url']}, http code: {$info['http_code']}. curl error: " . curl_error($ch);
             }
             
             curl_multi_remove_handle($mh, $ch);
             curl_close($ch);
         }
         curl_multi_close($mh);
+
+		$this->logAdminAction(
+		    empty($errors),
+			implode(', ', $urls),
+			null,
+			$errors
+	    );
         
         return $errors;
     }
+
+	/**
+	 * Log admin action
+	 *
+	 * @param bool $success
+	 * @param null $generalInfo
+	 * @param null $additionalInfo
+	 * @return mixed
+	 */
+	protected function logAdminAction($success=true, $generalInfo=null, $additionalInfo=null, $errors=array()) {
+		$eventCode = 'varnish_purge'; // this needs to match the code in logging.xml
+
+		if (!Mage::getSingleton('enterprise_logging/config')->isActive($eventCode, true)) {
+			return;
+		}
+
+		$username = null;
+		$userId   = null;
+		if (Mage::getSingleton('admin/session')->isLoggedIn()) {
+			$userId = Mage::getSingleton('admin/session')->getUser()->getId();
+			$username = Mage::getSingleton('admin/session')->getUser()->getUsername();
+		}
+
+		$request = Mage::app()->getRequest();
+		return Mage::getSingleton('enterprise_logging/event')->setData(array(
+			'ip'         => Mage::helper('core/http')->getRemoteAddr(),
+			'x_forwarded_ip'=> Mage::app()->getRequest()->getServer('HTTP_X_FORWARDED_FOR'),
+			'user'       => $username,
+			'user_id'    => $userId,
+			'is_success' => $success,
+			'fullaction' => "{$request->getRouteName()}_{$request->getControllerName()}_{$request->getActionName()}",
+			'event_code' => $eventCode,
+			'action'     => 'purge',
+			'info'       => $generalInfo,
+			'additional_info' => $additionalInfo,
+			'error_message' => implode("\n", $errors),
+		))->save();
+	}
+
 }

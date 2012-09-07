@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<config>
+    <api>
+        <resources>
+            <varnish translate="title" module="varnish">
+                <model>varnish/api</model>
+                <title>Varnish API</title>
+                <acl>varnish/varnish</acl>
+                <methods>
+                    <purge translate="title" module="varnish">
+                        <title>Purge URLs</title>
+                        <acl>varnish/varnish/purge</acl>
+                    </purge>
+                </methods>
+            </varnish>
+        </resources>
+        <acl>
+            <resources>
+                <varnish translate="title" module="varnish">
+                    <title>Magento Varnish</title>
+                    <purge translate="title" module="varnish">
+                        <title>Purge URLs</title>
+                    </purge>
+                </varnish>
+            </resources>
+        </acl>
+    </api>
+</config>

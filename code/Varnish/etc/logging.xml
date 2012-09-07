@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<logging>
+    <varnish_purge translate="label">
+        <label>Varnish purge</label>
+    </varnish_purge>
+</logging>
