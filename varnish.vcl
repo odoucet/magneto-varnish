@@ -94,6 +94,11 @@ sub vcl_recv {
     if (req.http.cookie ~ "nocache") {
         return(pass);
     }
+	
+    # default cookie name in Mage_PageCache_Helper_Data
+    if (req.http.cookie ~ "external_no_cache") {
+        return(pass);
+    }
 
     # Remove cookie 
     unset req.http.Cookie;

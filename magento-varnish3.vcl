@@ -95,6 +95,11 @@ sub vcl_recv {
         return(pass);
     }
 
+    # default cookie name in Mage_PageCache_Helper_Data
+    if (req.http.cookie ~ "external_no_cache") {
+        return(pass);
+    }
+
     # Remove cookie 
     unset req.http.Cookie;
     set req.http.magicmarker = "1"; #Instruct varnish to remove cache headers received from backend
